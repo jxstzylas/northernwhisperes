@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html> 
+    <title>Log in</title>
+    <style>
+  body, html, #page, .site, .site-content, .entry-content, .wp-block-post-content {
+    background-color: #300808 !important; 
+    background-image: radial-gradient(circle, #691219 0%, #050101 100%) !important;
+  }
+
+  .sso-login-shell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .sso-hub-container {
+    background-color: #0b0202; 
+    border: 2px solid #2d1212; 
+    padding: 30px;
+    border-radius: 8px;
+    max-width: 750px; 
+    margin: 40px auto; 
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+    font-family: 'Arial', sans-serif;
+    color: #e0d1d1;
+  }
+
+  .sso-view-switch {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .sso-view-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #471a1a;
+    background-color: #1a0909;
+    color: #d9caca;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .sso-view-btn.active {
+    background-color: #9e1e2f;
+    border-color: #7f1d1d;
+    color: #fff;
+    box-shadow: 0 5px 20px rgba(158, 30, 47, 0.35);
+  }
+
+  .sso-view-panel {
+    display: none;
+  }
+  .sso-view-panel.active {
+    display: block;
+  }
+
+  .sso-login-box {
+    background-color: #140505;
+    border: 1px solid #331414;
+    border-radius: 8px;
+    padding: 30px 26px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45);
+  }
+  .sso-login-title {
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+    color: #f2e6e6;
+    text-align: center;
+  }
+  .sso-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .sso-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sso-form-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #d7bebe;
+  }
+  .sso-form-input {
+    background-color: #0d0404;
+    border: 1px solid #4a1a1a;
+    border-radius: 5px;
+    padding: 12px 14px;
+    color: #fff;
+    font-size: 14px;
+  }
+  .sso-form-input:focus {
+    outline: none;
+    border-color: #a82c36;
+  }
+  .sso-login-btn {
+    background-color: #9e1e2f;
+    color: white;
+    border: 1px solid #631414;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 12px 16px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  .sso-admin-box {
+    background-color: #140505;
+    border: 1px solid #331414;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .sso-admin-title {
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #f2e6e6;
+    margin-bottom: 18px;
+  }
+  .sso-admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .sso-admin-row {
+    display: flex;
+    gap: 10px;
+  }
+  .sso-admin-input {
+    flex: 1;
+    background-color: #0d0404;
+    border: 1px solid #4a1a1a;
+    border-radius: 5px;
+    padding: 11px 12px;
+    color: #fff;
+    font-size: 14px;
+  }
+  .sso-admin-input:focus {
+    border-color: #a82c36;
+    outline: none;
+  }
+  .sso-admin-btn {
+    background-color: #9e1e24;
+    color: white;
+    border: 1px solid #631414;
+    border-radius: 5px;
+    padding: 12px 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+  }
+  .sso-admin-status {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #d8bbbb;
+    min-height: 16px;
+  }
+  .sso-admin-list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .sso-admin-item {
+    background-color: #0d0404;
+    border: 1px solid #4a1a1a;
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .sso-admin-item-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 150px;
+  }
+  .sso-admin-item strong {
+    color: #fff;
+    font-size: 14px;
+  }
+  .sso-admin-item small {
+    color: #d5b4b4;
+    font-size: 11px;
+  }
+  .sso-admin-item-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .sso-admin-mini-btn {
+    background-color: #ac182b;
+    border: 1px solid #631414;
+    color: #fff;
+    border-radius: 4px;
+    padding: 7px 10px;
+    cursor: pointer;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .sso-admin-mini-btn.secondary {
+    background-color: #2a1010;
+    border-color: #4a1a1a;
+  }
+  .sso-admin-mini-btn.danger {
+    background-color: #480d0d;
+    border-color: #7b1919;
+  }
+
+  /* Bereich: Code einlösen */
+  .sso-redeem-box {
+    margin-bottom: 35px;
+    background-color: #140505; 
+    padding: 20px;
+    border: 1px solid #331414;
+    border-radius: 6px;
+  }
+  .sso-redeem-title {
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+    color: #f2e6e6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sso-redeem-title::before {
+    content: "❖";
+    color: #a82c36;
+  }
+  .sso-input-row {
+    display: flex;
+    gap: 12px;
+  }
+  .sso-code-input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #4a1a1a;
+    background-color: #0d0404; 
+    border-radius: 4px;
+    font-size: 14px;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .sso-code-input::placeholder {
+    color: #543333;
+    font-size: 13px;
+  }
+  .sso-code-input:focus {
+    outline: none;
+    border-color: #a82c36;
+  }
+  .sso-btn-submit {
+    background-color: #9e1e2f; 
+    color: #ffffff;
+    border: 1px solid #631414;
+    padding: 0 25px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+  }
+  .sso-btn-submit:hover {
+    background-color: #b9273a;
+  }
+
+  .sso-inv-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  .sso-inv-title {
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #a82c2c; 
+  }
+  .sso-inv-counter {
+    font-size: 12px;
+    color: #6e5757;
+  }
+  .sso-inv-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); 
+    grid-gap: 10px;
+    background-color: #140909; 
+    padding: 15px;
+    border: 1px solid #2b1414;
+    border-radius: 6px;
+  }
+  .sso-inv-slot {
+    background-color: #2b1a16; 
+    border: 1px solid #422d28; 
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    transition: background-color 0.3s;
+  }
+  .sso-hidden-item {
+    display: none;
+    animation: itemPop 0.3s ease-out;
+  }
+
+  .sso-item-wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sso-item-svg {
+    width: 95%;
+    height: 95%;
+    display: block;
+    filter: drop-shadow(0 0 8px rgba(255, 44, 44, 0.8));
+  }
+  .sso-item-tooltip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 10px);
+    transform: translateX(-50%);
+    background-color: rgba(20, 5, 5, 0.95);
+    border: 1px solid #a82c2c;
+    color: #f6dcdc;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 2;
+  }
+  .sso-item-wrap:hover .sso-item-tooltip,
+  .sso-inv-slot:hover .sso-item-tooltip {
+    opacity: 1;
+  }
+
+  @keyframes itemPop {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+</style>
+
+<div class="sso-login-shell">
+  <div id="view-login" class="sso-view-panel active">
+    <div class="sso-login-box">
+      <div class="sso-login-title">Log in</div>
+      <form class="sso-login-form" onsubmit="event.preventDefault(); showLogin();">
+        <div class="sso-form-group">
+          <label class="sso-form-label" for="loginUsername">Benutzername</label>
+          <input class="sso-form-input" id="loginUsername" type="text" placeholder="Benutzername eingeben">
+        </div>
+        <div class="sso-form-group">
+          <label class="sso-form-label" for="loginPassword">Passwort</label>
+          <input class="sso-form-input" id="loginPassword" type="password" placeholder="Passwort eingeben">
+        </div>
+        <button class="sso-login-btn" type="submit">Anmelden</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="sso-hub-container" style="display:none;">
+  <div class="sso-view-switch">
+    <button class="sso-view-btn active" type="button" data-view="redeem">Code einlösen</button>
+    <button class="sso-view-btn" type="button" data-view="inventory">Inventar</button>
+    <button id="adminTab" class="sso-view-btn" type="button" data-view="admin" style="display:none;">Admin</button>
+  </div>
+
+  <div id="view-redeem" class="sso-view-panel active">
+    <div class="sso-redeem-box">
+      <div class="sso-redeem-title">Code Einlösen</div>
+      <div class="sso-input-row">
+        <input type="text" id="ssoCodeField" class="sso-code-input" placeholder="Gib deinen Code ein..." onkeydown="if(event.key === 'Enter') checkSsoEventCode()">
+        <button class="sso-btn-submit" onclick="checkSsoEventCode()">Einlösen</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-inventory" class="sso-view-panel">
+    <div class="sso-inv-header">
+      <div class="sso-inv-title">Mein Inventar</div>
+      <div class="sso-inv-counter"><span id="ssoItemCount">0</span> von 18 Gegenständen</div>
+    </div>
+
+    <div class="sso-inv-grid">
+      <div class="sso-inv-slot"><div id="slot-1" class="sso-hidden-item sso-item-wrap"></div></div>
+      <div class="sso-inv-slot"><div id="slot-2" class="sso-hidden-item sso-item-wrap"></div></div>
+      <div class="sso-inv-slot"><img id="slot-3" class="sso-hidden-item" src="BILD_URL_3" style="width: 85%; height: 85%; height: 85%; object-fit: contain;"></div>
+      <div class="sso-inv-slot"><img id="slot-4" class="sso-hidden-item" src="BILD_URL_4" style="width: 85%; height: 85%; object-fit: contain;"></div>
+      <div class="sso-inv-slot"><img id="slot-5" class="sso-hidden-item" src="BILD_URL_5" style="width: 85%; height: 85%; object-fit: contain;"></div>
+      <div class="sso-inv-slot"><img id="slot-6" class="sso-hidden-item" src="BILD_URL_6" style="width: 85%; height: 85%; object-fit: contain;"></div>
+
+      <div class="sso-inv-slot"><img id="slot-7" class="sso-hidden-item" src="BILD_URL_7" style="width: 85%; height: 85%; object-fit: contain;"></div>
+      <div class="sso-inv-slot"><img id="slot-8" class="sso-hidden-item" src="BILD_URL_8" style="width: 85%; height: 85%; object-fit: contain;"></div>
+      <div class="sso-inv-slot"><img id="slot-9" class="sso-hidden-item" src="BILD_URL_9" style="width: 85%; height: 85%; object-fit: contain;"></div>
+      <div class="sso-inv-slot"><img id="slot-10" class="sso-hidden-item" src="BILD_URL_10" style="width: 85%; height: 85%; object-fit: contain;"></div>
+      <div class="sso-inv-slot"><img id="slot-11" class="sso-hidden-item" src="BILD_URL_11" style="width: 85%; height: 85%; object-fit: contain;"></div>
+      <div class="sso-inv-slot"><img id="slot-12" class="sso-hidden-item" src="BILD_URL_12" style="width: 85%; height: 85%; object-fit: contain;"></div>
+
+      <div class="sso-inv-slot"><img id="slot-13" class="sso-hidden-item" src="BILD_URL_13" style="width: 85%; height: 85%; object-fit: contain;"></div>
+      <div class="sso-inv-slot"><img id="slot-14" class="sso-hidden-item" src="BILD_URL_14" style="width: 85%; height: 85%; object-fit: contain;"></div>
+      <div class="sso-inv-slot"><img id="slot-15" class="sso-hidden-item" src="BILD_URL_15" style="width: 85%; height: 85%; object-fit: contain;"></div>
+      <div class="sso-inv-slot"><img id="slot-16" class="sso-hidden-item" src="BILD_URL_16" style="width: 85%; height: 85%; object-fit: contain;"></div>
+      <div class="sso-inv-slot"><img id="slot-17" class="sso-hidden-item" src="BILD_URL_17" style="width: 85%; height: 85%; object-fit: contain;"></div>
+      <div class="sso-inv-slot"><img id="slot-18" class="sso-hidden-item" src="BILD_URL_18" style="width: 85%; height: 85%; object-fit: contain;"></div>
+    </div>
+  </div>
+
+  <div id="view-admin" class="sso-view-panel">
+    <div class="sso-admin-box">
+      <div class="sso-admin-title">Admin: Code erstellen</div>
+      <form id="adminCodeForm" class="sso-admin-form">
+        <div class="sso-admin-row">
+          <input id="adminCodeInput" class="sso-admin-input" type="text" placeholder="Code eingeben" required>
+          <input id="adminSlotInput" class="sso-admin-input" type="number" min="1" max="18" value="1" required>
+        </div>
+        <input id="adminImageInput" class="sso-admin-input" type="file" accept="image/*">
+        <input id="adminImageUrlInput" class="sso-admin-input" type="url" placeholder="Optional: Bild-URL eintragen">
+        <input id="adminDescriptionInput" class="sso-admin-input" type="text" maxlength="80" placeholder="Beschreibung (z. B. TEXT TEXT TEXT)">
+        <button class="sso-admin-btn" type="submit">Code speichern</button>
+      </form>
+      <div id="adminStatus" class="sso-admin-status"></div>
+
+      <div class="sso-admin-list" id="adminCodeList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var unlockedSlots = {};
+var currentUser = null;
+var sharedStateKey = 'sso_shared_state';
+
+var defaultCodeCatalog = {
+  'SCHWERT': { slot: 'slot-1', imageUrl: 'https://cdn.discordapp.com/attachments/1073675481376903169/1538595133103280148/jxst.zylas_1.png?ex=6a970661&is=6a95b4e1&hm=731ec45072c1b1dbb46002adf73ebe9710cc57a2c7ab14d58965aa66aafd844b&', description: 'TEXT TEXT TEXT' },
+  'KRISTALL': { slot: 'slot-2', imageUrl: 'https://cdn.discordapp.com/attachments/1073675481376903169/1538595133640024226/jxst.zylas_2.png?ex=6a970661&is=6a95b4e1&hm=532d8b605fa9aa7e018b804e5176780ff06f3d9099c3f80113a1430a2f7732f9&', description: 'SCHÖNER KRISTALL' },
+  'VALEDALE': { slot: 'slot-3', imageUrl: 'https://cdn.discordapp.com/attachments/1073675481376903169/1538595133103280148/jxst.zylas_1.png?ex=6a970661&is=6a95b4e1&hm=731ec45072c1b1dbb46002adf73ebe9710cc57a2c7ab14d58965aa66aafd844b&', description: '' },
+  'APFEL': { slot: 'slot-4', imageUrl: '', description: '' },
+  'POKAL': { slot: 'slot-5', imageUrl: '', description: '' },
+  'SCHLUESSEL': { slot: 'slot-6', imageUrl: '', description: '' },
+  'BRIEF': { slot: 'slot-7', imageUrl: '', description: '' },
+  'DIAMANT': { slot: 'slot-8', imageUrl: '', description: '' },
+  'SIEG': { slot: 'slot-9', imageUrl: '', description: '' },
+  'STIEFEL': { slot: 'slot-10', imageUrl: '', description: '' },
+  'KAROTTE': { slot: 'slot-11', imageUrl: '', description: '' },
+  'SCHLEIFE': { slot: 'slot-12', imageUrl: '', description: '' },
+  'HEU': { slot: 'slot-13', imageUrl: '', description: '' },
+  'HOLZ': { slot: 'slot-14', imageUrl: '', description: '' },
+  'KERZE': { slot: 'slot-15', imageUrl: '', description: '' },
+  'HAMMER': { slot: 'slot-16', imageUrl: '', description: '' },
+  'KOMPASS': { slot: 'slot-17', imageUrl: '', description: '' },
+  'STERN': { slot: 'slot-18', imageUrl: '', description: '' }
+};
+
+function getInventoryKey(username) {
+  return 'sso_inventory_' + username;
+}
+
+function getSharedState() {
+  var state = { codeCatalog: {}, inventories: {}, deletedCodes: {} };
+  try {
+    var raw = localStorage.getItem(sharedStateKey);
+    if (raw) {
+      var parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        state = Object.assign(state, parsed);
+      }
+    }
+  } catch (e) {
+    console.warn('Shared state parse error', e);
+  }
+
+  var legacyCatalog = localStorage.getItem('sso_admin_code_catalog');
+  if (legacyCatalog && Object.keys(state.codeCatalog || {}).length === 0) {
+    try {
+      state.codeCatalog = JSON.parse(legacyCatalog);
+    } catch (e) {
+      console.warn('Legacy catalog parse error', e);
+    }
+  }
+
+  return state;
+}
+
+function saveSharedState(state) {
+  localStorage.setItem(sharedStateKey, JSON.stringify(state));
+  localStorage.setItem('sso_admin_code_catalog', JSON.stringify(state.codeCatalog || {}));
+  window.dispatchEvent(new Event('sso-state-updated'));
+}
+
+function getCodeCatalog() {
+  var catalog = JSON.parse(JSON.stringify(defaultCodeCatalog));
+  var sharedState = getSharedState();
+  var savedCatalog = sharedState.codeCatalog || {};
+
+  Object.keys(savedCatalog).forEach(function(code) {
+    catalog[code.toUpperCase()] = savedCatalog[code];
+  });
+
+  Object.keys(sharedState.deletedCodes || {}).forEach(function(code) {
+    delete catalog[code.toUpperCase()];
+  });
+
+  return catalog;
+}
+
+function saveCodeCatalog(catalog) {
+  var sharedState = getSharedState();
+  sharedState.codeCatalog = catalog;
+  sharedState.deletedCodes = sharedState.deletedCodes || {};
+  Object.keys(catalog).forEach(function(code) {
+    delete sharedState.deletedCodes[code.toUpperCase()];
+  });
+  saveSharedState(sharedState);
+}
+
+function syncCatalogFromStorage() {
+  if (!currentUser) return;
+
+  var input = document.getElementById('ssoCodeField');
+  if (!input || !input.value) return;
+
+  var code = input.value.trim().toUpperCase();
+  var entry = getCodeCatalog()[code];
+  if (!entry) return;
+
+  if (entry.imageUrl) {
+    applySlotImage(entry.slot, entry.imageUrl, entry.description || 'TEXT TEXT TEXT');
+  }
+  showSsoItem(entry.slot, true);
+}
+
+window.addEventListener('storage', function(event) {
+  if (event.key === sharedStateKey || event.key === 'sso_admin_code_catalog') {
+    syncCatalogFromStorage();
+  }
+});
+window.addEventListener('sso-state-updated', function() {
+  syncCatalogFromStorage();
+});
+
+function saveCurrentUserInventory() {
+  if (!currentUser) return;
+
+  var sharedState = getSharedState();
+  var inventory = Object.keys(unlockedSlots);
+  sharedState.inventories = sharedState.inventories || {};
+  sharedState.inventories[currentUser] = inventory;
+  saveSharedState(sharedState);
+
+  localStorage.setItem(getInventoryKey(currentUser), JSON.stringify(inventory));
+}
+
+function hydrateSharedStateFromLegacy() {
+  var sharedState = getSharedState();
+  if (!sharedState.codeCatalog || Object.keys(sharedState.codeCatalog).length === 0) {
+    var legacyCatalog = localStorage.getItem('sso_admin_code_catalog');
+    if (legacyCatalog) {
+      try {
+        sharedState.codeCatalog = JSON.parse(legacyCatalog);
+        saveSharedState(sharedState);
+      } catch (e) {
+        console.warn('Legacy catalog hydration failed', e);
+      }
+    }
+  }
+}
+
+hydrateSharedStateFromLegacy();
+
+function applySlotImage(slotId, imageUrl, description) {
+  var element = document.getElementById(slotId);
+  if (!element) return;
+
+  if (element.tagName === 'IMG') {
+    var wrapper = document.createElement('div');
+    wrapper.id = slotId;
+    wrapper.className = 'sso-item-wrap';
+    element.parentNode.replaceChild(wrapper, element);
+    wrapper.appendChild(element);
+    element = wrapper;
+  }
+
+  if (imageUrl) {
+    element.innerHTML = '<img src="' + imageUrl + '" style="width: 85%; height: 85%; object-fit: contain; display: block;">';
+  }
+  element.insertAdjacentHTML('beforeend', '<span class="sso-item-tooltip">' + (description || 'TEXT TEXT TEXT') + '</span>');
+  element.style.display = 'block';
+  element.classList.remove('sso-hidden-item');
+}
+
+function loadUserInventory(username) {
+  currentUser = username;
+  unlockedSlots = {};
+
+  var sharedState = getSharedState();
+  var savedSlots = sharedState.inventories && sharedState.inventories[username]
+    ? sharedState.inventories[username]
+    : localStorage.getItem(getInventoryKey(username));
+
+  if (savedSlots) {
+    try {
+      savedSlots = JSON.parse(savedSlots);
+    } catch (e) {
+      savedSlots = [];
+    }
+  } else {
+    savedSlots = [];
+  }
+
+  document.querySelectorAll('.sso-hidden-item').forEach(function(item) {
+    item.style.display = 'none';
+    item.classList.add('sso-hidden-item');
+    if (item.parentElement) {
+      item.parentElement.style.backgroundColor = '#2b1a16';
+    }
+  });
+
+  var catalog = getCodeCatalog();
+  savedSlots.forEach(function(slotId) {
+    if (document.getElementById(slotId)) {
+      var catalogEntry = Object.keys(catalog).map(function(code) {
+        return catalog[code];
+      }).find(function(entry) {
+        return entry.slot === slotId;
+      });
+      if (catalogEntry) {
+        applySlotImage(slotId, catalogEntry.imageUrl, catalogEntry.description);
+      }
+      unlockedSlots[slotId] = true;
+      showSsoItem(slotId, false);
+    }
+  });
+
+  document.getElementById('ssoItemCount').innerText = Object.keys(unlockedSlots).length;
+}
+
+document.querySelectorAll('.sso-view-btn').forEach(function(button) {
+  button.addEventListener('click', function() {
+    var target = this.getAttribute('data-view');
+    document.querySelectorAll('.sso-view-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn === button);
+    });
+    document.querySelectorAll('.sso-view-panel').forEach(function(panel) {
+      panel.classList.toggle('active', panel.id === 'view-' + target);
+    });
+  });
+});
+
+function renderAdminCodeList() {
+  var list = document.getElementById('adminCodeList');
+  if (!list) return;
+
+  var catalog = getCodeCatalog();
+  var entries = Object.keys(catalog).sort();
+  list.innerHTML = '';
+
+  if (!entries.length) {
+    list.innerHTML = '<div class="sso-admin-item"><div class="sso-admin-item-main"><strong>Keine Codes vorhanden</strong><small>Erstelle unten einen neuen Code.</small></div></div>';
+    return;
+  }
+
+  entries.forEach(function(code) {
+    var entry = catalog[code];
+    var item = document.createElement('div');
+    item.className = 'sso-admin-item';
+    item.innerHTML = '<div class="sso-admin-item-main"><strong>' + code + '</strong><small>Slot: ' + (entry.slot || '---') + ' · Bild: ' + (entry.imageUrl ? 'Ja' : 'Nein') + '</small></div>' +
+      '<div class="sso-admin-item-actions">' +
+      '<button type="button" class="sso-admin-mini-btn secondary" data-action="edit" data-code="' + code + '">Bearbeiten</button>' +
+      '<button type="button" class="sso-admin-mini-btn danger" data-action="delete" data-code="' + code + '">Löschen</button>' +
+      '</div>';
+    list.appendChild(item);
+  });
+
+  list.querySelectorAll('[data-action="edit"]').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var code = this.getAttribute('data-code');
+      var entry = getCodeCatalog()[code];
+      if (!entry) return;
+      document.getElementById('adminCodeInput').value = code;
+      document.getElementById('adminSlotInput').value = entry.slot ? entry.slot.replace('slot-', '') : '1';
+      document.getElementById('adminImageUrlInput').value = entry.imageUrl || '';
+      document.getElementById('adminDescriptionInput').value = entry.description || '';
+      document.getElementById('adminStatus').textContent = 'Code geladen, bitte ändern und speichern.';
+      document.getElementById('adminCodeInput').focus();
+    });
+  });
+
+  list.querySelectorAll('[data-action="delete"]').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var code = this.getAttribute('data-code');
+      var sharedState = getSharedState();
+      sharedState.codeCatalog = sharedState.codeCatalog || {};
+      sharedState.deletedCodes = sharedState.deletedCodes || {};
+      delete sharedState.codeCatalog[code];
+      if (defaultCodeCatalog[code]) {
+        sharedState.deletedCodes[code] = true;
+      }
+      saveSharedState(sharedState);
+      renderAdminCodeList();
+      document.getElementById('adminStatus').textContent = 'Code gelöscht.';
+    });
+  });
+}
+
+window.addEventListener('sso-state-updated', function() {
+  renderAdminCodeList();
+});
+
+document.getElementById('adminCodeForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  var code = document.getElementById('adminCodeInput').value.trim().toUpperCase();
+  var slot = document.getElementById('adminSlotInput').value;
+  var fileInput = document.getElementById('adminImageInput');
+  var imageUrlInput = document.getElementById('adminImageUrlInput');
+  var description = document.getElementById('adminDescriptionInput').value.trim() || 'TEXT TEXT TEXT';
+  var status = document.getElementById('adminStatus');
+
+  function finishSave(imageSource) {
+    if (!code || !slot) {
+      status.textContent = 'Bitte Code und Slot eintragen.';
+      return;
+    }
+
+    var catalog = getCodeCatalog();
+    var previousEntry = catalog[code];
+    catalog[code] = {
+      slot: 'slot-' + slot,
+      imageUrl: imageSource || (previousEntry && previousEntry.imageUrl) || '',
+      description: description
+    };
+    saveCodeCatalog(catalog);
+
+    status.textContent = 'Code gespeichert und dem Slot zugewiesen.';
+    document.getElementById('adminCodeForm').reset();
+    document.getElementById('adminSlotInput').value = '1';
+    renderAdminCodeList();
+  }
+
+  var selectedFile = fileInput.files && fileInput.files[0];
+  if (selectedFile) {
+    var reader = new FileReader();
+    reader.onload = function(event) {
+      finishSave(event.target.result);
+    };
+    reader.onerror = function() {
+      status.textContent = 'Bild konnte nicht gelesen werden.';
+    };
+    reader.readAsDataURL(selectedFile);
+    return;
+  }
+
+  var fallbackUrl = imageUrlInput.value.trim();
+  finishSave(fallbackUrl);
+});
+
+renderAdminCodeList();
+
+function showLogin() {
+  var username = document.getElementById('loginUsername').value.trim();
+  var password = document.getElementById('loginPassword').value.trim();
+  var validUsers = {
+    'nw': 'nw0',
+    'lol': 'lolol',
+    'admin': 'admin08'
+  };
+
+  if (validUsers[username] && validUsers[username] === password) {
+    var adminTab = document.getElementById('adminTab');
+    if (username === 'admin') {
+      adminTab.style.display = 'block';
+    } else {
+      adminTab.style.display = 'none';
+    }
+
+    loadUserInventory(username);
+    document.querySelector('.sso-login-shell').style.display = 'none';
+    document.querySelector('.sso-hub-container').style.display = 'block';
+    document.getElementById('view-login').classList.remove('active');
+    document.getElementById('view-redeem').classList.add('active');
+    document.querySelector('[data-view="redeem"]').classList.add('active');
+    document.querySelector('[data-view="inventory"]').classList.remove('active');
+    document.querySelector('[data-view="admin"]').classList.remove('active');
+    document.getElementById('view-admin').classList.remove('active');
+  } else {
+    document.getElementById('loginUsername').style.borderColor = '#ff4d4d';
+    document.getElementById('loginPassword').style.borderColor = '#ff4d4d';
+    setTimeout(function() {
+      document.getElementById('loginUsername').style.borderColor = '#4a1a1a';
+      document.getElementById('loginPassword').style.borderColor = '#4a1a1a';
+    }, 800);
+    alert('Falscher Benutzername oder Passwort.');
+  }
+}
+
+function checkSsoEventCode() {
+  if (!currentUser) return;
+
+  var input = document.getElementById('ssoCodeField');
+  var code = input.value.trim().toUpperCase();
+  var catalog = getCodeCatalog();
+  var entry = catalog[code];
+
+  if (entry) {
+    if (entry.imageUrl) {
+      applySlotImage(entry.slot, entry.imageUrl, entry.description || 'TEXT TEXT TEXT');
+    }
+    showSsoItem(entry.slot, true);
+  } else {
+    input.style.borderColor = '#ff4d4d';
+    setTimeout(function() { input.style.borderColor = '#4a1a1a'; }, 500);
+  }
+
+  input.value = '';
+}
+
+function showSsoItem(slotId, persist) {
+  var element = document.getElementById(slotId);
+  if (element) {
+    element.classList.remove('sso-hidden-item');
+    element.style.display = 'block';
+    if (element.parentElement) {
+      element.parentElement.style.backgroundColor = '#3d2822';
+    }
+    unlockedSlots[slotId] = true;
+    document.getElementById('ssoItemCount').innerText = Object.keys(unlockedSlots).length;
+  }
+
+  if (persist !== false) {
+    saveCurrentUserInventory();
+  }
+}
+</script>
+</html>
