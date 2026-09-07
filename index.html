@@ -364,7 +364,8 @@
     transition: opacity 0.2s ease;
     z-index: 2;
   }
-  .sso-item-wrap:hover .sso-item-tooltip {
+  .sso-item-wrap:hover .sso-item-tooltip,
+  .sso-inv-slot:hover .sso-item-tooltip {
     opacity: 1;
   }
 
@@ -491,7 +492,7 @@ function getInventoryKey(username) {
 }
 
 function getSharedState() {
-  var state = { codeCatalog: {}, inventories: {} };
+  var state = { codeCatalog: {}, inventories: {}, deletedCodes: {} };
   try {
     var raw = localStorage.getItem(sharedStateKey);
     if (raw) {
@@ -531,12 +532,20 @@ function getCodeCatalog() {
     catalog[code.toUpperCase()] = savedCatalog[code];
   });
 
+  Object.keys(sharedState.deletedCodes || {}).forEach(function(code) {
+    delete catalog[code.toUpperCase()];
+  });
+
   return catalog;
 }
 
 function saveCodeCatalog(catalog) {
   var sharedState = getSharedState();
   sharedState.codeCatalog = catalog;
+  sharedState.deletedCodes = sharedState.deletedCodes || {};
+  Object.keys(catalog).forEach(function(code) {
+    delete sharedState.deletedCodes[code.toUpperCase()];
+  });
   saveSharedState(sharedState);
 }
 
@@ -599,17 +608,18 @@ function applySlotImage(slotId, imageUrl, description) {
   if (!element) return;
 
   if (element.tagName === 'IMG') {
-    element.src = imageUrl;
-    element.style.display = 'block';
-    return;
+    var wrapper = document.createElement('div');
+    wrapper.id = slotId;
+    wrapper.className = 'sso-item-wrap';
+    element.parentNode.replaceChild(wrapper, element);
+    wrapper.appendChild(element);
+    element = wrapper;
   }
 
   if (imageUrl) {
-    element.innerHTML = '<img src="' + imageUrl + '" style="width: 85%; height: 85%; object-fit: contain; display: block;">' +
-      '<span class="sso-item-tooltip">' + (description || 'TEXT TEXT TEXT') + '</span>';
-  } else {
-    element.innerHTML = '<span class="sso-item-tooltip">' + (description || 'TEXT TEXT TEXT') + '</span>';
+    element.innerHTML = '<img src="' + imageUrl + '" style="width: 85%; height: 85%; object-fit: contain; display: block;">';
   }
+  element.insertAdjacentHTML('beforeend', '<span class="sso-item-tooltip">' + (description || 'TEXT TEXT TEXT') + '</span>');
   element.style.display = 'block';
   element.classList.remove('sso-hidden-item');
 }
@@ -641,8 +651,17 @@ function loadUserInventory(username) {
     }
   });
 
+  var catalog = getCodeCatalog();
   savedSlots.forEach(function(slotId) {
     if (document.getElementById(slotId)) {
+      var catalogEntry = Object.keys(catalog).map(function(code) {
+        return catalog[code];
+      }).find(function(entry) {
+        return entry.slot === slotId;
+      });
+      if (catalogEntry) {
+        applySlotImage(slotId, catalogEntry.imageUrl, catalogEntry.description);
+      }
       unlockedSlots[slotId] = true;
       showSsoItem(slotId, false);
     }
@@ -705,9 +724,14 @@ function renderAdminCodeList() {
   list.querySelectorAll('[data-action="delete"]').forEach(function(button) {
     button.addEventListener('click', function() {
       var code = this.getAttribute('data-code');
-      var catalog = getCodeCatalog();
-      delete catalog[code];
-      saveCodeCatalog(catalog);
+      var sharedState = getSharedState();
+      sharedState.codeCatalog = sharedState.codeCatalog || {};
+      sharedState.deletedCodes = sharedState.deletedCodes || {};
+      delete sharedState.codeCatalog[code];
+      if (defaultCodeCatalog[code]) {
+        sharedState.deletedCodes[code] = true;
+      }
+      saveSharedState(sharedState);
       renderAdminCodeList();
       document.getElementById('adminStatus').textContent = 'Code gelöscht.';
     });
@@ -729,15 +753,16 @@ document.getElementById('adminCodeForm').addEventListener('submit', function(eve
   var status = document.getElementById('adminStatus');
 
   function finishSave(imageSource) {
-    if (!code || !slot || !imageSource) {
-      status.textContent = 'Bitte Code, Slot und Bild auswählen oder URL eintragen.';
+    if (!code || !slot) {
+      status.textContent = 'Bitte Code und Slot eintragen.';
       return;
     }
 
     var catalog = getCodeCatalog();
+    var previousEntry = catalog[code];
     catalog[code] = {
       slot: 'slot-' + slot,
-      imageUrl: imageSource,
+      imageUrl: imageSource || (previousEntry && previousEntry.imageUrl) || '',
       description: description
     };
     saveCodeCatalog(catalog);
